@@ -8,23 +8,6 @@ case class Aggregate(spark: SparkSession) {
 
   def buildAggregate(in: String, out: String): Any = {
 
-    def readData(in: String) = {
-      
-      import spark.implicits._
-
-      val data: DataFrame = spark.read.text(in)
-      val dataString: Dataset[String] = data.map(_.getString(0))
-      val dataParsed = dataString.flatMap(CovidData.fromString _)
-      toTypedData(dataParsed)
-    }
-
-    def toTypedData(ds:Dataset[CovidData]): DataFrame = {
-      val withDate = ds.withColumn("date", to_date(ds("date"), "yyyy-MM-dd"))
-      val withCases = withDate.withColumn("cases", ds("cases").cast("float").alias("cases"))
-      val withDeaths = withCases.withColumn("deaths", ds("deaths").cast("integer").alias("deaths"))
-      withDeaths
-    }
-
     def writeData(ds: DataFrame, temp: String) = {
       ds.createOrReplaceTempView("CovidDataByCity")
       val dataByRegion = spark.sql("""
@@ -66,7 +49,7 @@ case class Aggregate(spark: SparkSession) {
   
     val outPath = "./data/out/"
     val tempPath = "./data/temp/"
-    val data = readData(in)
+    val data = DataLoaders.LoadCovidData(spark).byCity(in)
     writeData(data, tempPath)
     renameOutput(tempPath, outPath, out)
     cleanup(tempPath, outPath)

@@ -7,7 +7,7 @@ object TrackerCli {
 
   def main(args: Array[String]): Unit = args match {
     case Array("agg", in, out) => SparkContext.runWithSpark(Aggregate(_).buildAggregate(in, out))
-    case Array("cmp", left, right) => Compare.compare(left, right)
+    case Array("cmp", left, right) => SparkContext.runWithSpark(Compare(_).compare(left, right))
     case _ => println(errorMsg)
   }
 
