@@ -24,7 +24,7 @@ case class CovidDataByState(
 
 object CovidDataByCity {
 
-  val R = """^(?<date>[-0-9]*),(?<state>[A-Z]*),(?<name>[\\u00c4-\\u00fcA-zÀ-ú'-.\\s]*),(?<code>[.0-9]*),(?<cases>[.0-9]*),(?<deaths>[.0-9]*)$""".r
+  val R = """^(?<date>[-0-9]*),(?<state>[A-Z]*),(?<name>[-\\u00c4-\\u00fcA-zÀ-ú'ÄÖÜäöü\s]*),(?<code>[.0-9]*),(?<cases>[.0-9]*),(?<deaths>[.0-9]*)$""".r
 
   def fromString(s: String): TraversableOnce[CovidDataByCity] = s match {
     case R(

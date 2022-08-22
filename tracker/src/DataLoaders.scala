@@ -17,7 +17,6 @@ object DataLoaders {
 			val withDeaths = withCases.withColumn("deaths", dataParsed("deaths").cast("integer").alias("deaths"))
 			val dataByCity = withDeaths.drop("name", "code")
 			dataByCity
-
 		}
 
 		def byRegion(fileToLoad: String): DataFrame = {
