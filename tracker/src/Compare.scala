@@ -28,7 +28,6 @@ case class Compare(spark: SparkSession) {
 
     data1.createOrReplaceTempView("SourceFile")
     data2.createOrReplaceTempView("CompareFile")
-
     joiner(data1, data2).createOrReplaceTempView("FileCompare")
 
     val summaryCompare = spark.sql(s"""
