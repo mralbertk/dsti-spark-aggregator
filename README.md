@@ -30,7 +30,7 @@ mkdir data/in
 
 2. Download the datasets from Kaggle, either via your browser or via the [Kaggle API](https://github.com/Kaggle/kaggle-api):
 
-	- [brazil_covid19_cities.csv](https://www.kaggle.com/datasets/unanimad/corona-virus-brazil?select=brazil_covid19_cities.csv)
+	- [brazil_covid19.csv](https://www.kaggle.com/datasets/unanimad/corona-virus-brazil?select=brazil_covid19.csv)
 	- [brazil_covid19_cities.csv](https://www.kaggle.com/datasets/unanimad/corona-virus-brazil?select=brazil_covid19_cities.csv)
 
 ## Run
