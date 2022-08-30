@@ -30,8 +30,6 @@ object DataWriters {
       		} file.delete()
 		}
 
-
-
 	}
 
 }
