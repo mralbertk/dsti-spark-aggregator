@@ -8,7 +8,7 @@ case class Aggregate(spark: SparkSession) {
 
   def createAggregate(filePath: String, fileName: String) = {
     
-    val data = DataLoaders.LoadCovidData(spark).byCity(filePath)
+    val data = DataLoaders.LoadCovidData(spark).fromCsv(filePath)
 
     data.createOrReplaceTempView("CovidDataByCity")
     

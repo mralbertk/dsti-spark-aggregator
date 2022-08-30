@@ -20,8 +20,8 @@ case class Compare(spark: SparkSession) {
       ds_left.join(ds_right, Seq("date", "state"), "full_outer")
     }
 
-    val data1 = DataLoaders.LoadCovidData(spark).byRegion(left)
-    val data2 = DataLoaders.LoadCovidData(spark).byState(right)
+    val data1 = DataLoaders.LoadCovidData(spark).fromCsv(left)
+    val data2 = DataLoaders.LoadCovidData(spark).fromCsv(right)
 
     val data1Name = left.split("/").last.replace(".", "_")
     val data2Name = right.split("/").last.replace(".", "_")

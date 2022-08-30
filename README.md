@@ -55,7 +55,7 @@ All the below commands must be executed in the root directory `path/dsti-spark-a
 spark-submit --class TrackerCli ./out/tracker/assembly.dest/out.jar agg ./data/in/brazil_covid19_cities.csv new_brazil_covid19_cities.csv
 
 # Compare newly created file with provided file on local cluster
-spark-submit --class TrackerCli ./out/tracker/assembly.dest/out.jar cmp ./data/in/brazil_covid19.csv ./data/out/new_brazil_covid19_cities.csv
+spark-submit --class TrackerCli ./out/tracker/assembly.dest/out.jar cmp ./data/in/brazil_covid19.csv ./data/out/new_brazil_covid19.csv
 
 ```
 
