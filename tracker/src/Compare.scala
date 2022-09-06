@@ -44,7 +44,7 @@ case class Compare(spark: SparkSession) {
         FROM FileCompare
       """)
 
-    summaryCompare.coalesce(1).write.option("header", true).mode("OVERWRITE").json("./data/out/compare/summary")
+    DataWriters.FileWriter(spark).writeSingleFile(summaryCompare, "diff_report.json")
   }
 
 }
