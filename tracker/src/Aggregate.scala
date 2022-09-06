@@ -19,7 +19,7 @@ case class Aggregate(spark: SparkSession) {
         ORDER BY date, state DESC
         """)  
 
-    DataWriters.WriteCsvFile(spark).writeFile(dataByState, fileName)
+    DataWriters.FileWriter(spark).writeSingleFile(dataByState, fileName)
   }
 
 }
