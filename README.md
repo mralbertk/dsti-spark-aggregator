@@ -52,7 +52,7 @@ All the below commands must be executed in the root directory `path/dsti-spark-a
 ./mill tracker.assembly 
 
 # Aggregate city-level data to state-level data on local cluster
-spark-submit --class TrackerCli ./out/tracker/assembly.dest/out.jar agg ./data/in/brazil_covid19_cities.csv new_brazil_covid19_cities.csv
+spark-submit --class TrackerCli ./out/tracker/assembly.dest/out.jar agg ./data/in/brazil_covid19_cities.csv new_brazil_covid19.csv
 
 # Compare newly created file with provided file on local cluster
 spark-submit --class TrackerCli ./out/tracker/assembly.dest/out.jar cmp ./data/in/brazil_covid19.csv ./data/out/new_brazil_covid19.csv
@@ -72,12 +72,11 @@ aws s3api create-bucket \
 	--acl $aclSetting \
 	--region $regionSelection \
 	--create-bucket-configuration LocationConstraint=$regionSelection 
-
 ```
 
 - Upload the following files to the bucket:
 	- The assembled .jar -> `./out/tracker/assembly.dest/out.jar`
-	- The first soure file: `./data/in/brazil_covid19_cities.csv`
+	- The first source file: `./data/in/brazil_covid19_cities.csv`
 	- The second source file: `./data/in/brazil_covid19.csv`
 
 ```bash
