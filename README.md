@@ -12,7 +12,7 @@ The design and strategy are described in the [docs/](docs) directory.
 
 ### Requirements
 - Java JDK version 11.x (11.0.4 or higher recommended): [Java SE 11 Archive Downloads](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
-- Scala version 2.x (2.12.15 or higher recommended): [scala-lang.org/download/]](https://www.scala-lang.org/download/)
+- Scala version 2.x (2.12.15 or higher recommended): [scala-lang.org/download/](https://www.scala-lang.org/download/)
 - Apache Spark must be installed: [Download Apache Spark](https://spark.apache.org/downloads.html)
 - `mill` build tool: [Installation instructions](https://com-lihaoyi.github.io/mill/mill/Intro_to_Mill.html#_installation)
 - An account with [Amazon Web Services](https://aws.amazon.com/)
