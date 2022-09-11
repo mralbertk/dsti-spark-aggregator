@@ -1,6 +1,34 @@
 # Run Batch with AWS
 Follow these steps to execute the batch on Amazon Web Services (AWS) using the _EMR Serverless_ service.
 
+---
+
+**NOTE:** Unfortunately, the AWS execution of the batch fails. I am 99% certain this is due to the way the batch is 
+designed: Results are to be written to a temporary directory (see [DataWriters.scala](../tracker/src/DataWriters.scala))
+ and then copied and renamed to generate the final output. 
+
+This works well when running in standalone or in a spark cluster on the local machine. However, When running in this 
+serverless context, the application  terminates after the temporary files are written (and no output is ever written 
+back to S3):
+
+```
+...
+22/09/11 14:31:24 INFO FileOutputCommitter: Saved output of task 'attempt_202209111431243648752553778838390_0008_m_000000_15' to file:/home/hadoop/data/temp
+22/09/11 14:31:24 INFO SparkHadoopMapRedUtil: attempt_202209111431243648752553778838390_0008_m_000000_15: Committed
+22/09/11 14:31:24 INFO Executor: Finished task 0.0 in stage 8.0 (TID 15). 5935 bytes result sent to driver
+22/09/11 14:31:24 INFO CoarseGrainedExecutorBackend: Driver commanded a shutdown
+22/09/11 14:31:24 INFO MemoryStore: MemoryStore cleared
+22/09/11 14:31:24 INFO BlockManager: BlockManager stopped
+22/09/11 14:31:24 INFO ShutdownHookManager: Shutdown hook called
+22/09/11 14:31:24 INFO ShutdownHookManager: Deleting directory /tmp/spark-d83645ca-2b37-4e76-a565-af910eb81465
+```
+
+This is unfortunate, and I am very certain that aside from this issue the below instructions to run the batch on AWS 
+are correct. Sadly, I don't have the time to re-design the batch to make it suitable for cloud execution. I'll know 
+better for next time, though.
+
+---
+
 ## Requirements
 - An account with [Amazon Web Services](https://aws.amazon.com/)
 - The [AWS CLI](https://aws.amazon.com/cli/) must be configured and updated
@@ -178,7 +206,7 @@ aws emr-serverless start-job-run \
         "'s3://$S3_BUCKET_NAME/data/in/brazil_covid19_cities.csv'",
         "new_brazil_covid19.csv"
       ],
-      "sparkSubmitParameters": "--class TrackerCli --conf spark.executor.cores=1 --conf spark.executor.memory=4g --conf spark.driver.cores=1 --conf spark.driver.memory=4g --conf spark.executor.instances=1"
+      "sparkSubmitParameters": "--class TrackerCli"
     }
   }'
 
@@ -196,7 +224,7 @@ aws emr-serverless start-job-run \
         "'s3://$S3_BUCKET_NAME/data/in/brazil_covid19.csv'",
         "'s3://$S3_BUCKET_NAME/data/out/new_brazil_covid19.csv'"
       ],
-      "sparkSubmitParameters": "--class TrackerCli --conf spark.executor.cores=1 --conf spark.executor.memory=4g --conf spark.driver.cores=1 --conf spark.driver.memory=4g --conf spark.executor.instances=1"
+      "sparkSubmitParameters": "--class TrackerCli"
     }
   }'
   
@@ -204,4 +232,29 @@ aws emr-serverless start-job-run \
 aws s3 cp s3://$S3_BUCKET_NAME/data/out/new_brazil_covid19.csv ./data/out/
 aws s3 cp s3://$S3_BUCKET_NAME/data/out/diff_report.json ./data/out/
 ```
+## Cleanup
+- Delete all resources to avoid unexpected cost
 
+```bash
+# Delete the application
+aws emr-serverless delete-application \
+    --application-id $EMR_APP_ID \
+    --region $EMR_APP_REGION
+
+# Clear out S3 bucket and delete
+aws s3 rm s3://S3_BUCKET_NAME --recursive
+aws s3api delete-bucket --bucket S3_BUCKET_NAME
+
+# Detach policy from role before deletion
+aws iam detach-role-policy \
+    --role-name $IAM_ROLE \
+    --policy-arn $IAM_POLICY_ARN
+    
+# Delete role 
+aws iam delete-role \
+    --role-name $IAM_ROLE 
+
+# Delete policy
+aws iam delete-policy \
+    --policy-arn $IAM_POLICY_ARN
+```
