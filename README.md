@@ -52,7 +52,7 @@ All the below commands must be executed in the root directory `path/dsti-spark-a
 ./mill tracker.assembly 
 
 # Aggregate city-level data to state-level data on local cluster
-spark-submit --class TrackerCli ./out/tracker/assembly.dest/out.jar agg ./data/in/brazil_covid19_cities.csv new_brazil_covid19_cities.csv
+spark-submit --class TrackerCli ./out/tracker/assembly.dest/out.jar agg ./data/in/brazil_covid19_cities.csv new_brazil_covid19.csv
 
 # Compare newly created file with provided file on local cluster
 spark-submit --class TrackerCli ./out/tracker/assembly.dest/out.jar cmp ./data/in/brazil_covid19.csv ./data/out/new_brazil_covid19.csv
@@ -60,4 +60,59 @@ spark-submit --class TrackerCli ./out/tracker/assembly.dest/out.jar cmp ./data/i
 ```
 
 ### Amazon Web Services
-TODO
+- Create a new S3 bucket
+
+```bash
+bucketName=my-unique-bucket
+aclSetting=private
+regionSelection=my-selected-region
+
+aws s3api create-bucket \
+	--bucket $bucketName \
+	--acl $aclSetting \
+	--region $regionSelection \
+	--create-bucket-configuration LocationConstraint=$regionSelection 
+```
+
+- Upload the following files to the bucket:
+	- The assembled .jar -> `./out/tracker/assembly.dest/out.jar`
+	- The first source file: `./data/in/brazil_covid19_cities.csv`
+	- The second source file: `./data/in/brazil_covid19.csv`
+
+```bash
+trackerJar=./out/tracker/assembly.dest/out.jar
+sourceCities=./data/in/brazil_covid19_cities.csv
+sourceStates=./data/in/brazil_covid19.csv
+
+# .jar file
+aws s3api put-object \
+	--bucket $bucketName \
+	--key spark-jar/tracker.jar \
+	--body $trackerJar
+
+# Covid19 data by city
+aws s3api put-object \
+	--bucket $bucketName \
+	--key data/in/brazil_covid19_cities.csv \
+	--body $sourceCities
+
+# Covid19 data by state
+aws s3api put-object \
+	--bucket $bucketName \
+	--key data/in/brazil_covid19.csv \
+	--body $sourceStates
+```
+
+- Submit the spark job via AWS EMR
+
+```bash
+aws emr create-cluster \
+	--name "Add Spark Step Cluster" \
+	--release-label emr-5.36.0 \
+	--applications Name=Spark \
+	--ec2-attributes KeyName=myKey \
+	--instance-type m5.xlarge \
+	--instance-count 3 \
+	--steps Type=Spark,Name="Spark Program",ActionOnFailure=CONTINUE,Args=[agg, $src, $dst] \
+	--use-default-roles
+````
