@@ -6,6 +6,8 @@ This basic Spark batch was created for an assignment in _Data Pipeline #2_ taugh
 2. Create a report comparing [brazil_covid19.csv](https://www.kaggle.com/datasets/unanimad/corona-virus-brazil?select=brazil_covid19.csv) to the newly generated file.
 3. Execute the batch locally as standalone or in a spark cluster, and online in an AWS EMR cluster.
 
+The design and strategy are described in the [docs/](docs) directory.
+
 ## Setup
 
 ### Requirements
@@ -17,7 +19,7 @@ This basic Spark batch was created for an assignment in _Data Pipeline #2_ taugh
 - The [AWS CLI](https://aws.amazon.com/cli/) must be configured
 
 ### Installation
-1. Clone this repository and prepare the `data/in` directory
+1. Clone this repository and prepare the `./data/in` directory
 
 ```bash
 # After installing mill, clone this repository
@@ -30,8 +32,10 @@ mkdir data/in
 
 2. Download the datasets from Kaggle, either via your browser or via the [Kaggle API](https://github.com/Kaggle/kaggle-api):
 
-	- [brazil_covid19.csv](https://www.kaggle.com/datasets/unanimad/corona-virus-brazil?select=brazil_covid19.csv)
-	- [brazil_covid19_cities.csv](https://www.kaggle.com/datasets/unanimad/corona-virus-brazil?select=brazil_covid19_cities.csv)
+    - [brazil_covid19.csv](https://www.kaggle.com/datasets/unanimad/corona-virus-brazil?select=brazil_covid19.csv)
+    - [brazil_covid19_cities.csv](https://www.kaggle.com/datasets/unanimad/corona-virus-brazil?select=brazil_covid19_cities.csv)
+
+Place them both in `./data/in`.
 
 ## Run
 All the below commands must be executed in the root directory `path/dsti-spark-aggregator/`:
